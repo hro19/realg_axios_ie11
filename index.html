@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>WP REST axiosテストページ</title>
+<script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  </head>
+  <body>
+<div id="test1">
+<h2>axiosによるページ情報取得（ie11対応）</h2>
+<p>{{ alls.content_url}}</p>
+<p>{{ alls.member_num }}</p>
+<!-- <p>{{ alls.contents[0].area }}</p>
+<p>{{ alls.contents[0].pref }}</p> -->
+<hr>
+<ul>
+<li v-for="(date,d_index) in dates" :key="d_index">
+	<!-- {{date.events[0]}} -->
+	<dl v-for="(event,e_index) in date.events" :key="e_index">
+		<dt>{{event.name}}<br>
+			{{d_index}}<br>
+			{{event.start_time}}<br>
+		</dt>
+		<dd>{{event.url}}</dd>
+	</dl>
+</li>
+</ul>
+</div>
+
+    <script type="text/javascript">
+  new Vue( {
+    el: '#test1',
+  data: function () {
+    return {
+      alls: [],
+    }
+  },
+    created: function(){
+    	this.getPosts();
+    },
+    methods: {
+      getPosts: function(){
+      	var _this = this;
+
+        axios.get( 'https://www.0553.jp/scrap/api/event_with_period?shop_id=92&content_code=saishuuhei&event_start_date=2018/12/20&event_end_date=2019/2/3' )
+        .then( function(response){
+          _this.alls = response.data.contents[0];
+        } )
+        .catch( function(error){
+          window.alert( error );
+        } );
+      }
+    },
+    computed:{
+    	//日程表だけ
+    	dates: function(){
+    		return this.alls.date;
+    	}
+    }
+})
+
+// articles: [],
+// dates: []
+
+</script>
+
+</body>
+</html>
