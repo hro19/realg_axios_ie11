@@ -1,0 +1,12 @@
+スクラップチケットのapiエンドポイント
+
+https://www.0553.jp/scrap/api/event_with_period?shop_id=92&content_code=saishuuhei&event_start_date=2018/12/20&event_end_date=2019/2/3
+
+
+●エンドポイントとして
+「shop_id」（必須項目）　開催場所などの情報
+「content_code」（必須項目）　最終兵器の場合はsaishuuheiとしている
+「event_start_date」「event_end_date」開催期間
+●event_start_dateとevent_end_dateは必須項目
+●必須だけど適当な数字でも動く。
+●
