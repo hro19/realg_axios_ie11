@@ -35,16 +35,13 @@ new Vue({
 
     //本日の日付をevent_start_dateにセットする
     getEventStartDate: function () {
-      var today = moment();
-      var oneday = moment('2018-11-30');
-      var diff = oneday.diff(today);
-      if (diff <= 0) {
-        //console.log('過ぎました')
-        var _sd = today.format("YYYY/MM/DD");
-        this.querys.event_start_date = _sd;
-      } else {
-        //console.log('まだその時間ではありません')
-      }
+      var _today = new Date();
+      var _m = ('00' + (_today.getMonth() + 1)).slice(-2);
+      var _d = ('00' + _today.getDate()).slice(-2);
+      _sd = _today.getFullYear() + '/' + _m + '/' + _d;
+      //console.log(_sd);
+      this.querys.event_start_date = _sd;
+      // this.querys.event_start_date = '2019/01/12';
     },
 
     //rest apiからjson値を取得（axiosは非同期処理であることに注意）
@@ -59,6 +56,10 @@ new Vue({
           window.alert(error);
         });
     },
+  },
+  mounted: function () {
+    var fromDate = $moment();
+    console.log(555);
   },
 
   computed: {
