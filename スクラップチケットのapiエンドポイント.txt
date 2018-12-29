@@ -10,3 +10,112 @@ https://www.0553.jp/scrap/api/event_with_period?shop_id=92&content_code=saishuuh
 ●event_start_dateとevent_end_dateは必須項目
 ●必須だけど適当な数字でも動く。
 ●
+
+
+
+
+導入手順						
+	・「イベントスケジューラー」を表示したい箇所に以下のHTMLコードを追記します。					
+						
+		<div class="_scheduler_container" id="_scheduler" product_id=""></div>				
+						
+		※スケジューラー内テキスト色が動的に変わりますので、特設サイト固有デザインによってテキストが読めなくならないかどうかをご確認ください。				
+						
+	・product_id=""の箇所にチケットシステムで発番されたproduct_idを追記します。					
+						
+	　　　　　　例）	<div class="_scheduler_container" id="_scheduler" product_id="61,13"></div>				
+						
+		※ この例では、プロダクトIDが61番、13番のイベントをイベントスケジューラーに表示するようにしています。				
+		※発番されたプロダクトIDがわからない場合は下記「プロダクトIDの確認方法」を御覧ください。				
+		※product_idを入力しない場合、全イベント情報が表示されます。				
+		※product_id=の値には空白を含まず、複数ではカンマ区切りで指定して下さい。				
+						
+	・HTMLに以下のスクリプトを読み込みます。（例として本体サイトでは</body>の直前に記述しています。）					
+						
+		<script type="text/javascript" src="/assets/common/js/scheduler-common-plugins.js"></script>				
+		<script type="text/javascript" src="/assets/common/js/scheduler-detail-bundle.js"></script>				
+						
+		※scheduler-common-plugins.jsはイベントスケジューラーで使用するライブラリのjsを集めたもので、				
+		　必ずscheduler-detail-bundle.jsの前に読み込むようにして下さい。				
+		※この読み込みタイミングの時点で特設サイト側のjavascriptを競合したりする場合は、				
+		　以下の「エラーが出てしまう場合」を御覧ください。				
+		※assetsは東京ミステリーサーカスのサイト内にあります。外部サイトにスケジューラーを読み込む際にはsrcの頭にhttps://mysterycircus.jp/を追加してください。（2018/11/29追記）				
+						
+	・表示の良いタイミングでイベントスケジューラーを起動します。					
+						
+	　　　　　　例）	<script>				
+		$(document).ready(function() {				
+		　schedulerCommon.init();				
+		});				
+		</script>				
+						
+	・英語のイベントスケジューラーを表示したい場合。					
+						
+	　　　　　　例）	<script>				
+		$(document).ready(function() {				
+		　schedulerCommon.init('en');				
+		});				
+		</script>				
+						
+プロダクトIDの確認方法						
+						
+	・以下のサイトを開きます。					
+	https://ticket.mysterycircus.jp/					
+						
+	・特設サイトのチケットを検索し、詳細ページを開きます。					
+						
+	・詳細ページのURLパラメータ内の「product_id=」の値部分がプロダクトIDとなります。					
+						
+						
+エラーが出てしまう場合						
+						
+	・HTMLに以下のスクリプトを読み込んだ時点でエラーとなる場合、読み込みのタイミングをずらすことで					
+	　エラー対処する方法をご紹介します。					
+		<script type="text/javascript" src="/assets/common/js/scheduler-common-plugins.js"></script>				
+		<script type="text/javascript" src="/assets/common/js/scheduler-detail-bundle.js"></script>				
+						
+	・以下の例のようにjQueryのgetScriptやsetTimeoutを使用して対処します。					
+						
+		<script>				
+		$(document).ready(function(){				
+		　setTimeout(function() {				
+		　　$.getScript("/assets/common/js/scheduler-common-plugins.js", function(){				
+		　　　$.getScript("/assets/common/js/scheduler-detail-bundle.js", function(){				
+		　　　　schedulerCommon.init();				
+		　　　});				
+		　　});				
+		　}, 1000);				
+		});				
+		</script>				
+
+
+
+
+
+
+[返信 aid=2306529 to=125010204-1122120792436375552] ありがさん
+「さよなら、僕らのマジックアワー」のjsがminify化されておりまして、残念ながら読み解くことが不可能であります、「最終兵器」のAPI仕様を見ていたところ、
+パラメータが二つ必要なのではないかと考えておりました。
+
+例　最終兵器の東京会場ページ
+shop_id　= 92
+content_code = saishuuhei
+
+今回テストとして一時的にデータをお借りする「さよなら、僕らのマジックアワー」APIデータは
+shop_id　= 164
+content_code = ??
+
+「shop_id」は会場の番号
+「content_code」は脱出ゲームの品目
+と考えております。つまり「content_code」は一律と考えております。
+
+content_codeもお分かりになりましたら、是非教えて下さい。
+
+12月下旬になり、「ハンターハンター情報」が入力されましたら、
+ハンターハンターの「shop_id」「content_code」に切り替えるということで承知しました。
+
+
+
+
+
+
