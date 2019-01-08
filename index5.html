@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>WP REST axiosテストページ</title>
+  <script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="./lib/slick/slick.css" />
+  <link rel="stylesheet" type="text/css" href="./lib/slick/slick-theme.css" />
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script type="text/javascript" src="./lib/slick/slick.min.js"></script>
+
+
+</head>
+
+<body>
+  <div id="test1">
+    <h2>axiosによるページ情報取得（ie11対応）</h2>
+    <p>{{ alls.content_url}}</p>
+    <p>{{ alls.member_num }}</p>
+    <hr>
+    <button @click="goNextMouse()">次の月へ</button><br>
+    <button @click="goPrevMouse()">前の月へ</button>
+    <div class="wrap">
+      <ul class="slider multiple-item">
+        <li v-for="(date,d_index) in dates" :key="d_index">
+          <!-- <button @click="pickMonth(d_index)">押す</button> -->
+          <a href="javascript:void(0)" @click="closeUpSet(date, d_index)">
+            <h5>{{d_index}}</h5>
+            <dl v-for="(event,e_index) in date.events" :key="e_index">
+              <dt>{{event.name}}<br>
+                {{event.start_time}}<br>
+              </dt>
+              <dd>{{event.url}}</dd>
+            </dl>
+          </a>
+        </li>
+      </ul>
+
+      <div class="closeup_area">
+        <h2>【日程詳細】</h2>
+        <p>{{closeupDay}}</p>
+        <dl v-for="(event,e_index) in closeup.events" :key="e_index">
+          <dt>{{event.name}}<br>
+            {{event.start_time}}<br>
+          </dt>
+          <dd>{{event.url}}</dd>
+        </dl>
+      </div>
+
+    </div>
+    <hr>
+  </div>
+
+
+
+
+  <script type="text/javascript">
+    var vm = new Vue({
+      el: '#test1',
+      data: function () {
+        return {
+          //デバイスサイズ横幅
+          width: window.innerWidth,
+          //本日の日付
+          today: "",
+          //全てのjsonデータを格納
+          alls: [],
+          //slickを１回だけ発動させるためのフラグ
+          isSlicked: false,
+          //日程のクローズアップ情報格納
+          closeup: {},
+          //日程のクローズアップの年月日
+          closeupDay: "",
+          //日程のクローズアップの月
+          closeupMonth: "",
+        }
+      },
+      created: function () {
+        this.today = this.formatDate(new Date())
+        this.getPosts();
+        window.addEventListener('resize', this.wid, false)
+      },
+      methods: {
+        //json情報の取得（非同期処理）
+        getPosts: function () {
+          var _this = this;
+
+          //axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=92&content_code=saishuuhei&event_start_date=' + _this.today + '&event_end_date=2019/2/3')
+          axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=108&content_code=gyaku19_os&event_start_date=' + _this.today + '&event_end_date=2019/5/12')
+            .then(function (response) {
+              _this.alls = response.data.contents[0];
+            })
+            .catch(function (error) {
+              window.alert(error);
+            });
+        },
+
+        //クローズアップされている日程詳細をセット
+        closeUpSet: function (date, d_index) {
+          this.closeup = date
+          this.closeupDay = d_index
+          //this.closeupMonth = this.formatDate(new Date(d_index), 'MM');
+        },
+
+        //クローズアップされている日付をセット
+        closeUpSetFirst: function () {
+          this.closeup = Object.values(this.dates)[0]
+          this.closeupDay = Object.keys(this.dates)[0]
+          //this.closeupMonth = this.formatDate(new Date(Object.keys(this.dates)[0]), 'MM');
+        },
+
+        //日にち取得
+        // @param  {Date}   date
+        // @param  {String} [format]
+        // @return {String}
+        formatDate: function (date, format) {
+          if (!format) format = 'YYYY/MM/DD';
+          format = format.replace(/YYYY/g, date.getFullYear());
+          format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+          format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
+          return format;
+        },
+
+        //月取得
+        //pickMonth: function (day) {
+        //console.log(this.formatDate(new Date(day), 'MM'))
+        //this.closeupMonth = this.formatDate(new Date(day), 'MM');
+        //},
+
+        //デバイスサイズ計算
+        wid: function () {
+          // resizeのたびにこいつが発火するので、ここでやりたいことをやる
+          this.width = window.innerWidth;
+        },
+
+        goNextMouse: function () {
+          var _this02 = this
+          //console.log("hit");
+          var targetNextM = Number(this.closeupMonth) + 1
+          targetNextM = (targetNextM > 12) ? 1 : targetNextM;
+          targetNextM = ("00" + targetNextM).slice(-2);
+
+          var hairetuIndex = 0
+          Object.keys(this.dates).some(function (key) {
+            //console.log(hairetuIndex);
+            var palMouse = _this02.formatDate(new Date(key), 'MM')
+            if (palMouse.indexOf(targetNextM) != -1) {
+              //_this02.closeupDay = key
+              //_this02.closeupMonth = palMouse
+              return true;
+              //console.log(key);
+            }
+            //console.log(targetNextM);
+            hairetuIndex++
+          })
+          var kazoe = Object.keys(this.dates).length;
+          //レスポンシブに対応
+          var sai = (this.width >= 768) ? 7 : 3;
+
+          //slickGoToが行き過ぎないように
+          hairetuIndex = ((kazoe - sai) < hairetuIndex) ? kazoe - sai : hairetuIndex;
+          //console.log(kazoe)
+          //console.log(hairetuIndex)
+          $('.multiple-item').slick('slickGoTo', hairetuIndex);
+          this.closeupMonth = targetNextM
+        },
+        goPrevMouse: function () {
+          var _this03 = this
+          //console.log("hit");
+          var targetPrevM = Number(this.closeupMonth) - 1
+          targetPrevM = (targetPrevM === 0) ? 12 : targetPrevM;
+          targetPrevM = ("00" + targetPrevM).slice(-2);
+          //console.log(targetPrevM)
+
+          var hairetuIndex = 0
+          Object.keys(this.dates).some(function (key) {
+            //console.log(hairetuIndex);
+            var palMouse = _this03.formatDate(new Date(key), 'MM')
+            if (palMouse.indexOf(targetPrevM) != -1) {
+              //_this03.closeupDay = key
+              //_this03.closeupMonth = palMouse
+              return true;
+              //console.log(key);
+            }
+            //console.log(targetPrevM);
+            hairetuIndex++
+          })
+          var kazoe = Object.keys(this.dates).length;
+          //レスポンシブに対応
+          var sai = (this.width >= 768) ? 7 : 3;
+
+          //slickGoToが行き過ぎないように
+          hairetuIndex = (kazoe === hairetuIndex) ? 0 : hairetuIndex;
+          //console.log(kazoe)
+          //console.log(hairetuIndex)
+          $('.multiple-item').slick('slickGoTo', hairetuIndex);
+          this.closeupMonth = targetPrevM
+        }
+      },
+
+
+      computed: {
+        //allsの中から日程表だけ
+        dates: function () {
+          return this.alls.date;
+        },
+        monthfirsts: function () {
+          if (!this.dates) {
+            return [];
+          }
+          var _this07 = this
+          var datesArray = Object.keys(this.dates);
+          var monthArray = {}
+
+          datesArray.forEach(function (key, i) {
+            var targetM = _this07.formatDate(new Date(key), 'MM');
+            if (targetM in monthArray === false) {
+              monthArray[targetM] = i
+            }
+          })
+          return monthArray
+        },
+      },
+      // watch: {
+      //   alls(vals, oldVals) {
+      //     if (!this.isSlicked) return;
+
+      //     $('.multiple-item').slick('unslick')
+      //     this.isSlicked = false
+      //   }
+      // },
+      updated: function () {
+        this.$nextTick(function () {
+          if (!this.isSlicked) {
+            //slickスライダー条件設定
+            $('.multiple-item').slick({
+              speed: 150,
+              infinite: false,
+              slidesToShow: 7,
+              slidesToScroll: 1,
+              responsive: [{
+                breakpoint: 768,
+                settings: {
+                  slidesToShow: 3,
+                  slidesToScroll: 1,
+                }
+              }
+              ]
+            });
+          }
+          //slick発動後フラグをtrueにする
+          this.isSlicked = true
+
+          //初回のレンダリングの時だけ発動する
+          if (Object.keys(this.closeup).length === 0) {
+            this.closeUpSetFirst()
+          }
+        })
+      }
+    })
+
+    //slick,vue.jsの組み合わせ　参考サイト
+    // http://haito.hatenablog.com/entry/2018/02/16/105136
+
+
+  </script>
+
+
+
+
+  <style>
+    /*************************************
+ 	reset
+ *************************************/
+    body,
+    div,
+    dl,
+    dt,
+    dd,
+    ul,
+    ol,
+    li,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    pre,
+    form,
+    fieldset,
+    input,
+    textarea,
+    p,
+    blockquote,
+    th,
+    td {
+      margin: 0;
+      padding: 0;
+    }
+
+    img {
+      border: 0;
+    }
+
+    ol,
+    ul {
+      list-style: none;
+    }
+
+    body {}
+
+    .wrap {
+      width: 1020px;
+      /*padding-left,rightと画像幅の総量*/
+      margin: 30px auto;
+    }
+
+    .slider {
+      margin: 0 0 50px;
+    }
+
+    .slider img {
+      width: 100%;
+      height: auto;
+    }
+
+    .slick-dots {
+      bottom: -25px;
+    }
+
+    .multiple-item li.slick-slide {
+      width: 300px;
+      margin: 15px 19px;
+      border: 1px solid #9E9E9F;
+    }
+
+    .multiple-item li.slick-slide:hover {
+      box-shadow: 0 0 15px rgba(50, 50, 50, .3);
+      transition: 0.4s;
+    }
+
+    .multiple-item li.slick-slide:hover img {
+      opacity: 0.7 !important;
+      filter: alpha(opacity=70) !important;
+      /* ie lt 8 */
+      -ms-filter: "alpha(opacity=70)" !important;
+      /* ie 8 */
+      -moz-opacity: 0.7 !important;
+      /* FF lt 1.5, Netscape */
+      -khtml-opacity: 0.7 !important;
+      /* Safari 1.x */
+      zoom: 1 !important;
+      transition: 0.4s;
+    }
+
+    .multiple-item li.slick-slide .profile_box {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    @media screen and (max-width: 640px) {
+      .wrap {
+        width: 80%;
+      }
+
+      .slider img {
+        width: 100%;
+        height: auto;
+      }
+  </style>
+
+</body>
+
+</html>

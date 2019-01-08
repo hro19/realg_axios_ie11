@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>WP REST axiosテストページ</title>
+  <script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="./lib/swiper/swiper.css">
+
+
+</head>
+
+<body>
+  <div id="test1">
+    <h2>axiosによるページ情報取得（ie11対応）</h2>
+    <p>{{ alls.content_url}}</p>
+    <p>{{ alls.member_num }}</p>
+    <hr>
+    <!-- <button @click="goNextMouse()">次の月へ</button><br> -->
+    <!-- <button @click="goPrevMouse()">前の月へ</button> -->
+    <!-- <div id="go_next" :class="{active: goes_active}" data-hash="9">来月へ</div>
+    <div id="go_prev" :class="{active: backes_active}" data-hash="1">先月へ</div> -->
+    <!-- <div id="go_next" style="pointer-events: auto;" data-hash="9">ハッシュ9です</div> -->
+    <!-- <div id="go_prev" style="pointer-events: auto;" data-hash="4">ハッシュ4です</div> -->
+
+    <div class="wrap">
+      <div class="swiper-container">
+        <ul class="swiper-wrapper">
+          <li class="swiper-slide" v-for="(date,d_index) in dates" :key="d_index">
+            <!-- <button @click="pickMonth(d_index)">押す</button> -->
+            <a href="javascript:void(0)" @click="closeUpSet(date, d_index)">
+              <h5>{{d_index}}</h5>
+              <dl v-for="(event,e_index) in date.events" :key="e_index">
+                <dt>{{event.name}}<br>
+                  {{event.start_time}}<br>
+                </dt>
+                <dd>{{event.url}}</dd>
+              </dl>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="closeup_area">
+        <h2>【日程詳細】</h2>
+        <p>{{closeupDay}}</p>
+        <dl v-for="(event,e_index) in closeup.events" :key="e_index">
+          <dt>{{event.name}}<br>
+            {{event.start_time}}<br>
+          </dt>
+          <dd>{{event.url}}</dd>
+        </dl>
+      </div>
+
+    </div>
+    <hr>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="./lib/swiper/swiper.js"></script>
+  <script type="text/javascript">
+    var vm = new Vue({
+      el: '#test1',
+      data: function () {
+        return {
+          //デバイスサイズ横幅
+          width: window.innerWidth,
+          //本日の日付
+          today: "",
+          //全てのjsonデータを格納
+          alls: [],
+          //日程のクローズアップ情報格納
+          closeup: {},
+          //日程のクローズアップの年月日
+          closeupDay: "",
+          //日程のクローズアップの月
+          //closeupMonth: "",
+          //ライブラリーswiperのインスタンス
+          swiper: {},
+          //
+          //backes: "",
+          //backes_active: true,
+          //
+          //goes: "",
+          //goes_active: true,
+        }
+      },
+      created: function () {
+        this.today = this.formatDate(new Date())
+        this.getPosts();
+        window.addEventListener('resize', this.wid, false)
+      },
+      methods: {
+        //json情報の取得（非同期処理）
+        getPosts: function () {
+          var _this = this;
+
+          //axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=92&content_code=saishuuhei&event_start_date=' + _this.today + '&event_end_date=2019/2/3')
+          axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=108&content_code=gyaku19_os&event_start_date=' + _this.today + '&event_end_date=2019/5/12')
+            .then(function (response) {
+              _this.alls = response.data.contents[0];
+            })
+            .catch(function (error) {
+              window.alert(error);
+            });
+        },
+
+        //クローズアップされている日程詳細をセット
+        closeUpSet: function (date, d_index) {
+          this.closeup = date
+          this.closeupDay = d_index
+          //this.closeupMonth = this.formatDate(new Date(d_index), 'MM');
+        },
+
+        //クローズアップされている日付をセット
+        closeUpSetFirst: function () {
+          this.closeup = Object.values(this.dates)[0]
+          this.closeupDay = Object.keys(this.dates)[0]
+          //this.closeupMonth = this.formatDate(new Date(Object.keys(this.dates)[0]), 'MM');
+        },
+
+        //日にち取得
+        // @param  {Date}   date
+        // @param  {String} [format]
+        // @return {String}
+        formatDate: function (date, format) {
+          if (!format) format = 'YYYY/MM/DD';
+          format = format.replace(/YYYY/g, date.getFullYear());
+          format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+          format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
+          return format;
+        },
+
+        //月取得
+        //pickMonth: function (day) {
+        //console.log(this.formatDate(new Date(day), 'MM'))
+        //this.closeupMonth = this.formatDate(new Date(day), 'MM');
+        //},
+
+        //デバイスサイズ計算
+        wid: function () {
+          // resizeのたびにこいつが発火するので、ここでやりたいことをやる
+          this.width = window.innerWidth;
+        },
+
+
+      },
+
+
+      computed: {
+        //allsの中から日程表だけ
+        dates: function () {
+          return this.alls.date;
+        },
+        monthfirsts: function () {
+          if (!this.dates) {
+            return [];
+          }
+          var _this07 = this
+          var datesArray = Object.keys(this.dates);
+          var monthArray = {}
+          var indexArray = []
+
+          datesArray.forEach(function (key, i) {
+            var targetM = _this07.formatDate(new Date(key), 'MM');
+            indexArray.push(Number(targetM))
+          })
+          return indexArray
+        },
+
+        //activeスライダー番号
+        activeIndex: function () {
+          return this.swiper.activeIndex;
+        },
+      },
+      watch: {
+        activeIndex: function (value) {
+          // this.go()
+          // this.back()
+        },
+      },
+      updated: function () {
+        this.$nextTick(function () {
+          //スライダー条件設定
+          var mySwiper = new Swiper('.swiper-container', {
+            navigation: {
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            },
+            loop: false,
+            slidesPerView: 7,
+            slidesPerGroup: 1,
+            centeredSlides: false,
+            spaceBetween: 5,
+            breakpoints: {
+              // when window width is <= 320px
+              640: {
+                slidesPerView: 3,
+                slidesPerGroup: 1,
+              },
+            },
+          })
+
+          this.swiper = mySwiper
+
+          //初回のレンダリングの時だけ発動する
+          if (Object.keys(this.closeup).length === 0) {
+            this.closeUpSetFirst()
+          }
+
+        })
+      }
+    })
+
+
+
+
+
+
+    $('#go_next').on('click', function () {
+      //console.log(document.getElementById("go_next"))
+      vm.swiper.slideTo(document.getElementById("go_next").dataset.hash);
+    });
+
+    $('#go_prev').on('click', function () {
+      //console.log(document.getElementById("go_prev"))
+      vm.swiper.slideTo(document.getElementById("go_prev").dataset.hash);
+    });
+
+    // vm.swiper.on('slideChange', function () {
+    //   console.log(vm.swiper.activeIndex)
+    // });
+
+  </script>
+
+
+
+
+  <style>
+    /*************************************
+ 	reset
+ *************************************/
+    body,
+    div,
+    dl,
+    dt,
+    dd,
+    ul,
+    ol,
+    li,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    pre,
+    form,
+    fieldset,
+    input,
+    textarea,
+    p,
+    blockquote,
+    th,
+    td {
+      margin: 0;
+      padding: 0;
+    }
+
+    img {
+      border: 0;
+    }
+
+    ol,
+    ul {
+      list-style: none;
+    }
+
+    body {}
+
+    .wrap {
+      width: 1020px;
+      /*padding-left,rightと画像幅の総量*/
+      margin: 30px auto;
+    }
+
+    #go_next,
+    #go_prev {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    #go_next.active,
+    #go_prev.active {
+      opacity: 1.0;
+      pointer-events: auto;
+    }
+
+    @media screen and (max-width: 640px) {
+      .wrap {
+        width: 80%;
+      }
+  </style>
+
+</body>
+
+</html>
