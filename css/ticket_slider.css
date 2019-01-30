@@ -1,0 +1,107 @@
+/*************************************
+ 	coordination 共通css
+*************************************/
+
+/*************************************
+ 	reset
+ *************************************/
+
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+fieldset,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
+    margin: 0;
+    padding: 0;
+}
+
+img {
+    border: 0;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+body {}
+
+/*------------------------------------------
+	sliderエリア
+------------------------------------------*/
+
+.wrap {
+    width: 90%;
+    max-width: 1020px;
+    /*padding-left,rightと画像幅の総量*/
+    margin: 30px auto;
+}
+
+.slider {
+    margin: 0 0 50px;
+}
+
+.slider img {
+    width: 100%;
+    height: auto;
+}
+
+.slick-dots {
+    bottom: -25px;
+}
+
+.slick-slide {
+    margin: 0px 6px;
+    border: 1px solid #9E9E9F;
+}
+
+.slick-slide:hover {
+    box-shadow: 0 0 15px rgba(50, 50, 50, .3);
+    transition: 0.4s;
+}
+
+.slick-slide:hover img {
+    opacity: 0.7 !important;
+    filter: alpha(opacity=70) !important;
+    /* ie lt 8 */
+    -ms-filter: "alpha(opacity=70)" !important;
+    /* ie 8 */
+    -moz-opacity: 0.7 !important;
+    /* FF lt 1.5, Netscape */
+    -khtml-opacity: 0.7 !important;
+    /* Safari 1.x */
+    zoom: 1 !important;
+    transition: 0.4s;
+}
+
+.slick-slide .profile_box {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+    .wrap {
+        width: 74%;
+    }
+    /*************************************
+ 	各記事ページ
+	/coordination/記事名/
+*************************************/
