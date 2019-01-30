@@ -7,10 +7,10 @@
   <script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="../../lib/slick/slick.css" />
-  <link rel="stylesheet" type="text/css" href="../../lib/slick/slick-theme.css" />
+  <link rel="stylesheet" type="text/css" href="./lib/slick/slick.css" />
+  <link rel="stylesheet" type="text/css" href="./lib/slick/slick-theme.css" />
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script type="text/javascript" src="../../lib/slick/slick.min.js"></script>
+  <script type="text/javascript" src="./lib/slick/slick.min.js"></script>
 
 
 </head>
@@ -76,53 +76,37 @@
           closeupDay: "",
           //日程のクローズアップの月
           closeupMonth: "",
-          //urlの第二スラッグを取得
-          keySlug: "",
-          //apiエントリポイントURLを構築するのに使う
-          apiEntryPoint: "",
-          //地方情報（apiエンドポイントURLを構築するのに使う）
           slugs: { // slugによりapi情報を取得
-            osaka: { // 最終兵器_大阪
-              shop_id: 108,
+            osaka: { // 大阪
               content_code: "saishuu_os",
               event_start_date: "2019/1/11",
               event_end_date: "2019/3/3",
             },
-            yokohama: { // 最終兵器_横浜
-              shop_id: 101,
+            yokohama: { // 横浜
               content_code: "saishuuhei",
               event_start_date: "2019/2/1",
               event_end_date: "2019/2/24",
             },
-            sapporo: { // 最終兵器_札幌
-              shop_id: 97,
+            sapporo: { // 札幌
               content_code: "saishuuhei",
               event_start_date: "2019/2/2",
               event_end_date: "2019/3/3",
             },
-            nagoya: { // 吉本_名古屋
-              shop_id: 93,
-              content_code: "gyakuten19",
-              event_start_date: "2019/3/15",
-              event_end_date: "2019/4/21",
-            },
-            kagawa: { // 吉本_香川
-              shop_id: 113,
-              content_code: "gyakuten19",
-              event_start_date: "2019/5/11",
-              event_end_date: "2019/5/12",
+            nagoya: { // 名古屋
+              content_code: "saishuuhei",
+              event_start_date: "2019/2/8",
+              event_end_date: "2019/3/10",
             },
           }
         }
       },
       created: function () {
         this.today = this.formatDate(new Date())
-
-        //リサイズに応じてデバイスサイズを測定
+        this.getPosts();
         window.addEventListener('resize', this.wid, false)
 
-        //url情報、チケットapiエンドポイントとなるkeyを取得
-        this.keySlug = window.location.pathname.split("/")[2];
+        var keySlug = window.location.pathname.split("/")[2];
+        console.log(keySlug)
       },
       methods: {
         //json情報の取得（非同期処理）
@@ -130,8 +114,7 @@
           var _this = this;
 
           //axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=92&content_code=saishuuhei&event_start_date=' + _this.today + '&event_end_date=2019/2/3')
-          //axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=108&content_code=gyaku19_os&event_start_date=' + _this.today + '&event_end_date=2019/5/12')
-          axios.get(_this.apiEntryPoint)
+          axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=108&content_code=gyaku19_os&event_start_date=' + _this.today + '&event_end_date=2019/5/12')
             .then(function (response) {
               _this.alls = response.data.contents[0];
             })
@@ -243,6 +226,7 @@
         }
       },
 
+
       computed: {
         //allsの中から日程表だけ
         dates: function () {
@@ -265,22 +249,14 @@
           return monthArray
         },
       },
-      watch: {
-        //ticketAPIのエンドポイント構築
-        keySlug: function () {
-          var todayDate = new Date(this.today);
-          var eventStartDate = new Date(this.slugs[this.keySlug].event_start_date);
-          //console.log(todayDate)
-          //console.log(eventStartDate)
-          var da = (eventStartDate > todayDate) ? this.slugs[this.keySlug].event_start_date : this.today;
-          //console.log(da)
-          var basicUrl = 'https://www.0553.jp/scrap/api/event_with_period'
-          this.apiEntryPoint = basicUrl + '?shop_id=' + this.slugs[this.keySlug].shop_id + '&content_code=' + this.slugs[this.keySlug].content_code + '&event_start_date=' + da + '&event_end_date=' + this.slugs[this.keySlug].event_end_date
-        },
-        apiEntryPoint: function () {
-          this.getPosts();
-        }
-      },
+      // watch: {
+      //   alls(vals, oldVals) {
+      //     if (!this.isSlicked) return;
+
+      //     $('.multiple-item').slick('unslick')
+      //     this.isSlicked = false
+      //   }
+      // },
       updated: function () {
         this.$nextTick(function () {
           if (!this.isSlicked) {
@@ -311,12 +287,9 @@
       }
     })
 
-
     //slick,vue.jsの組み合わせ　参考サイト
     // http://haito.hatenablog.com/entry/2018/02/16/105136
 
-    //日付の比較とチェックをする方法
-    //https://www.sejuku.net/blog/23115
 
   </script>
 
@@ -384,18 +357,18 @@
       bottom: -25px;
     }
 
-    .slick-slide {
+    .multiple-item li.slick-slide {
       width: 300px;
       margin: 15px 19px;
       border: 1px solid #9E9E9F;
     }
 
-    .slick-slide:hover {
+    .multiple-item li.slick-slide:hover {
       box-shadow: 0 0 15px rgba(50, 50, 50, .3);
       transition: 0.4s;
     }
 
-    .slick-slide:hover img {
+    .multiple-item li.slick-slide:hover img {
       opacity: 0.7 !important;
       filter: alpha(opacity=70) !important;
       /* ie lt 8 */
@@ -409,7 +382,7 @@
       transition: 0.4s;
     }
 
-    .slick-slide .profile_box {
+    .multiple-item li.slick-slide .profile_box {
       padding: 30px 20px;
       text-align: center;
     }
