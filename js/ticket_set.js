@@ -14,19 +14,21 @@ var vm = new Vue({
       closeup: {},
       //日程のクローズアップの年月日
       closeupDay: "",
-      //日程のクローズアップの月
-      closeupMonth: "",
+      //slicksliderの現在のアクティブなindex番号
+      slickActiveIndex: 0,
+      //slicksliderの現在のアクティブな月
+      slickActiveMonth: 0,
       //urlの第二スラッグを取得
       keySlug: "",
       //apiエントリポイントURLを構築するのに使う
       apiEntryPoint: "",
       //地方情報（apiエンドポイントURLを構築するのに使う）
       slugs: { // slugによりapi情報を取得
-        osaka: { // 最終兵器_大阪
+        osaka: { // 吉本_大阪
           shop_id: 108,
-          content_code: "saishuu_os",
-          event_start_date: "2019/1/11",
-          event_end_date: "2019/3/3",
+          content_code: "gyaku19_os",
+          event_start_date: "2019/3/8",
+          event_end_date: "2019/5/12",
         },
         yokohama: { // 最終兵器_横浜
           shop_id: 101,
@@ -68,9 +70,6 @@ var vm = new Vue({
     //json情報の取得（非同期処理）
     getPosts: function () {
       var _this = this;
-
-      //axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=92&content_code=saishuuhei&event_start_date=' + _this.today + '&event_end_date=2019/2/3')
-      //axios.get('https://www.0553.jp/scrap/api/event_with_period?shop_id=108&content_code=gyaku19_os&event_start_date=' + _this.today + '&event_end_date=2019/5/12')
       axios.get(_this.apiEntryPoint)
         .then(function (response) {
           _this.alls = response.data.contents[0];
@@ -79,6 +78,7 @@ var vm = new Vue({
           window.alert(error);
         });
     },
+
 
     //クローズアップされている日程詳細をセット
     closeUpSet: function (date, d_index) {
@@ -106,12 +106,6 @@ var vm = new Vue({
       return format;
     },
 
-    //月取得
-    //pickMonth: function (day) {
-    //console.log(this.formatDate(new Date(day), 'MM'))
-    //this.closeupMonth = this.formatDate(new Date(day), 'MM');
-    //},
-
     //デバイスサイズ計算
     wid: function () {
       // resizeのたびにこいつが発火するので、ここでやりたいことをやる
@@ -119,67 +113,42 @@ var vm = new Vue({
     },
 
     goNextMouse: function () {
-      var _this02 = this
-      //console.log("hit");
-      var targetNextM = Number(this.closeupMonth) + 1
+      var targetNextM = Number(this.slickActiveMonth) + 1
       targetNextM = (targetNextM > 12) ? 1 : targetNextM;
-      targetNextM = ("00" + targetNextM).slice(-2);
-
-      var hairetuIndex = 0
-      Object.keys(this.dates).some(function (key) {
-        //console.log(hairetuIndex);
-        var palMouse = _this02.formatDate(new Date(key), 'MM')
-        if (palMouse.indexOf(targetNextM) != -1) {
-          //_this02.closeupDay = key
-          //_this02.closeupMonth = palMouse
-          return true;
-          //console.log(key);
-        }
-        //console.log(targetNextM);
-        hairetuIndex++
-      })
-      var kazoe = Object.keys(this.dates).length;
-      //レスポンシブに対応
-      var sai = (this.width >= 768) ? 7 : 3;
+      //console.log(this.slickActiveMonth)
+      //console.log(targetNextM)
+      var hairetuIndex = this.monthlists.findIndex(function (x) {
+        return (x === targetNextM)
+      });
+      if (hairetuIndex == -1) { hairetuIndex = this.slickActiveIndex }
+      //console.log(hairetuIndex);
 
       //slickGoToが行き過ぎないように
-      hairetuIndex = ((kazoe - sai) < hairetuIndex) ? kazoe - sai : hairetuIndex;
-      //console.log(kazoe)
-      //console.log(hairetuIndex)
+      //レスポンシブに対応 7 : 3
+      if (this.width >= 768) {
+        if (hairetuIndex > this.monthlists.length - 7) {
+          hairetuIndex = this.monthlists.length - 7
+        }
+      } else {
+        if (hairetuIndex > this.monthlists.length - 3) {
+          hairetuIndex = this.monthlists.length - 3
+        }
+      }
+      console.log(hairetuIndex);
+
       $('.multiple-item').slick('slickGoTo', hairetuIndex);
-      this.closeupMonth = targetNextM
     },
     goPrevMouse: function () {
-      var _this03 = this
-      //console.log("hit");
-      var targetPrevM = Number(this.closeupMonth) - 1
-      targetPrevM = (targetPrevM === 0) ? 12 : targetPrevM;
-      targetPrevM = ("00" + targetPrevM).slice(-2);
+      var targetPrevM = Number(this.slickActiveMonth) - 1
+      targetPrevM = (targetPrevM > 12) ? 1 : targetPrevM;
+      //console.log(this.slickActiveMonth)
       //console.log(targetPrevM)
+      var hairetuIndex = this.monthlists.findIndex(function (x) {
+        return (x === targetPrevM)
+      });
+      //console.log(hairetuIndex);
 
-      var hairetuIndex = 0
-      Object.keys(this.dates).some(function (key) {
-        //console.log(hairetuIndex);
-        var palMouse = _this03.formatDate(new Date(key), 'MM')
-        if (palMouse.indexOf(targetPrevM) != -1) {
-          //_this03.closeupDay = key
-          //_this03.closeupMonth = palMouse
-          return true;
-          //console.log(key);
-        }
-        //console.log(targetPrevM);
-        hairetuIndex++
-      })
-      var kazoe = Object.keys(this.dates).length;
-      //レスポンシブに対応
-      var sai = (this.width >= 768) ? 7 : 3;
-
-      //slickGoToが行き過ぎないように
-      hairetuIndex = (kazoe === hairetuIndex) ? 0 : hairetuIndex;
-      //console.log(kazoe)
-      //console.log(hairetuIndex)
       $('.multiple-item').slick('slickGoTo', hairetuIndex);
-      this.closeupMonth = targetPrevM
     }
   },
 
@@ -188,21 +157,19 @@ var vm = new Vue({
     dates: function () {
       return this.alls.date;
     },
-    monthfirsts: function () {
+
+    monthlists: function () {
       if (!this.dates) {
         return [];
       }
       var _this07 = this
-      var datesArray = Object.keys(this.dates);
-      var monthArray = {}
+      var indexArray = []
 
-      datesArray.forEach(function (key, i) {
+      for (var key in this.dates) {
         var targetM = _this07.formatDate(new Date(key), 'MM');
-        if (targetM in monthArray === false) {
-          monthArray[targetM] = i
-        }
-      })
-      return monthArray
+        indexArray.push(Number(targetM))
+      }
+      return indexArray
     },
   },
   watch: {
@@ -219,8 +186,15 @@ var vm = new Vue({
     },
     apiEntryPoint: function () {
       this.getPosts();
+    },
+    slickActiveIndex: function () {
+      this.slickActiveMonth = this.monthlists[this.slickActiveIndex]
+    },
+    monthlists: function () {
+      this.slickActiveMonth = this.monthlists[this.slickActiveIndex]
     }
   },
+
   updated: function () {
     this.$nextTick(function () {
       if (!this.isSlicked) {
@@ -257,3 +231,13 @@ var vm = new Vue({
 
 //日付の比較とチェックをする方法
 //https://www.sejuku.net/blog/23115
+
+
+//issue
+//次の月ボタン　都市を超す場合は想定をしていない
+
+
+$('.multiple-item').on('afterChange', function (event, slick, currentSlide) {
+  //console.log(slick);
+  vm.slickActiveIndex = currentSlide
+});

@@ -1,59 +1,24 @@
 /*************************************
- 	coordination 共通css
+ 	silder_area 共通css
 *************************************/
-
-/*************************************
- 	reset
- *************************************/
-
-body,
-div,
-dl,
-dt,
-dd,
-ul,
-ol,
-li,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-pre,
-form,
-fieldset,
-input,
-textarea,
-p,
-blockquote,
-th,
-td {
-    margin: 0;
-    padding: 0;
-}
-
-img {
-    border: 0;
-}
-
-ol,
-ul {
-    list-style: none;
-}
-
-body {}
 
 /*------------------------------------------
 	sliderエリア
 ------------------------------------------*/
 
-.wrap {
-    width: 90%;
-    max-width: 1020px;
-    /*padding-left,rightと画像幅の総量*/
-    margin: 30px auto;
+.slider_area {
+    padding: 0 60px;
 }
+
+@media screen and (max-width: 768px) {
+    .slider_area {
+        padding: 0 14%;
+    }
+}
+
+/*------------------------------------------
+	slider_slickエリア
+------------------------------------------*/
 
 .slider {
     margin: 0 0 50px;
@@ -97,11 +62,4 @@ body {}
     text-align: center;
 }
 
-@media screen and (max-width: 768px) {
-    .wrap {
-        width: 74%;
-    }
-    /*************************************
- 	各記事ページ
-	/coordination/記事名/
-*************************************/
+@media screen and (max-width: 768px) {}

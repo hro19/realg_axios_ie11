@@ -6,7 +6,10 @@
   <title>WP REST axiosテストページ</title>
   <script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="../../js/myie11_polyfill.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="../../css/common.css">
+  <link rel="stylesheet" href="../../css/ticket.css">
   <link rel="stylesheet" type="text/css" href="../../lib/slick/slick.css" />
   <link rel="stylesheet" type="text/css" href="../../lib/slick/slick-theme.css" />
   <link rel="stylesheet" type="text/css" href="../../css/ticket_slider.css" />
@@ -14,42 +17,46 @@
 </head>
 
 <body>
-  <div id="test1">
-    <h2>axiosによるページ情報取得（ie11対応）</h2>
-    <p>{{ alls.content_url}}</p>
-    <p>{{ alls.member_num }}</p>
-    <hr>
-    <button @click="goNextMouse()">次の月へ</button><br>
-    <button @click="goPrevMouse()">前の月へ</button>
-    <div class="wrap">
-      <ul class="slider multiple-item">
-        <li v-for="(date,d_index) in dates" :key="d_index">
-          <!-- <button @click="pickMonth(d_index)">押す</button> -->
-          <a href="javascript:void(0)" @click="closeUpSet(date, d_index)">
-            <h5>{{d_index}}</h5>
-            <dl v-for="(event,e_index) in date.events" :key="e_index">
+  <div class="wrap">
+    <div class="inner">
+      <div class="slider_area">
+
+        <div id="test1">
+          <h2>axiosによるページ情報取得（ie11対応）</h2>
+          <p>{{ alls.content_url}}</p>
+          <p>{{ alls.member_num }}</p>
+          <hr>
+          <button @click="goNextMouse()">次の月へ</button><br>
+          <button @click="goPrevMouse()">前の月へ</button>
+          <ul class="slider multiple-item">
+            <li v-for="(date,d_index) in dates" :key="d_index">
+              <!-- <button @click="pickMonth(d_index)">押す</button> -->
+              <a href="javascript:void(0)" @click="closeUpSet(date, d_index)">
+                <h5>{{d_index}}</h5>
+                <dl v-for="(event,e_index) in date.events" :key="e_index">
+                  <dt>{{event.name}}<br>
+                    {{event.start_time}}<br>
+                  </dt>
+                  <dd>{{event.event_url}}</dd>
+                </dl>
+              </a>
+            </li>
+          </ul>
+
+          <div class="closeup_area">
+            <h2>【日程詳細】</h2>
+            <p>{{closeupDay}}</p>
+            <dl v-for="(event,e_index) in closeup.events" :key="e_index">
               <dt>{{event.name}}<br>
                 {{event.start_time}}<br>
               </dt>
               <dd>{{event.url}}</dd>
             </dl>
-          </a>
-        </li>
-      </ul>
+          </div>
 
-      <div class="closeup_area">
-        <h2>【日程詳細】</h2>
-        <p>{{closeupDay}}</p>
-        <dl v-for="(event,e_index) in closeup.events" :key="e_index">
-          <dt>{{event.name}}<br>
-            {{event.start_time}}<br>
-          </dt>
-          <dd>{{event.url}}</dd>
-        </dl>
+        </div>
       </div>
-
     </div>
-    <hr>
   </div>
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
