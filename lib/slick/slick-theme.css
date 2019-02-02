@@ -10,8 +10,8 @@
     position: absolute;
     top: 50%;
     display: block;
-    width: 30px;
-    height: 134px;
+    width: 40px;
+    height: 90px;
     padding: 0;
     margin-top: -10px\9;
     /*lte IE 8*/
@@ -19,10 +19,11 @@
     -ms-transform: translate(0, -50%);
     transform: translate(0, -50%);
     cursor: pointer;
-    color: transparent;
+    color: #000;
     border: none;
     outline: none;
     background: transparent;
+    background-color: #fff;
 }
 
 .slick-prev:hover,
@@ -32,6 +33,7 @@
     color: transparent;
     outline: none;
     background: transparent;
+    background-color: #fff;
 }
 
 .slick-prev:hover:before,
@@ -58,53 +60,66 @@
 }
 
 .slick-prev {
-    left: -35px;
+    left: -1px;
+    border-radius: 12px 0 0 12px;
 }
 
 [dir='rtl'] .slick-prev {
-    right: -35px;
+    right: -1px;
     left: auto;
+    border-radius: 12px 0 0 12px;
 }
 
-.slick-prev:before {
-    content: url(image/icon_left.png);
-}
-
+.slick-prev:before,
 [dir='rtl'] .slick-prev:before {
-    content: url(image/icon_right.png);
+    content: "\f104";
+    font-family: 'Font Awesome 5 Light';
+    font-size: 4.5rem;
+    color: #000;
 }
 
 .slick-next {
-    right: -35px;
+    right: -1px;
+    border-radius: 0 12px 12px 0;
 }
 
 [dir='rtl'] .slick-next {
     right: auto;
-    left: -35px;
+    left: -1px;
+    border-radius: 0 12px 12px 0;
 }
 
-.slick-next:before {
-    content: url(image/icon_right.png);
-}
-
+.slick-next:before,
 [dir='rtl'] .slick-next:before {
-    content: url(image/icon_left.png);
+    content: "\f105";
+    font-family: 'Font Awesome 5 Light';
+    font-size: 4.5rem;
+    color: #000;
 }
 
 @media screen and (max-width: 768px) {
+    .slick-prev,
+    .slick-next {
+        width: 35px;
+        height: 70px;
+    }
     .slick-prev {
-        left: -28px;
+        left: -1px;
+        border-radius: 0px;
     }
     [dir='rtl'] .slick-prev {
-        right: -28px;
+        right: -1px;
         left: auto;
+        border-radius: 0px;
     }
     .slick-next {
-        right: -28px;
+        right: -1px;
+        border-radius: 0px;
     }
     [dir='rtl'] .slick-next {
         right: auto;
-        left: -28px;
+        left: -1px;
+        border-radius: 0px;
     }
 }
 

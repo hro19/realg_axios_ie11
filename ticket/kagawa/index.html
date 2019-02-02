@@ -6,7 +6,10 @@
   <title>WP REST axiosテストページ</title>
   <script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="../../js/myie11_polyfill.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="../../css/common.css">
+  <link rel="stylesheet" href="../../css/ticket.css">
   <link rel="stylesheet" type="text/css" href="../../lib/slick/slick.css" />
   <link rel="stylesheet" type="text/css" href="../../lib/slick/slick-theme.css" />
   <link rel="stylesheet" type="text/css" href="../../css/ticket_slider.css" />
@@ -14,43 +17,43 @@
 </head>
 
 <body>
-  <div id="test1">
-    <h2>axiosによるページ情報取得（ie11対応）</h2>
-    <p>{{ alls.content_url}}</p>
-    <p>{{ alls.member_num }}</p>
-    <hr>
-    <button @click="goNextMouse()">次の月へ</button><br>
-    <button @click="goPrevMouse()">前の月へ</button>
-    <div class="wrap">
-      <ul class="slider multiple-item">
-        <li v-for="(date,d_index) in dates" :key="d_index">
-          <!-- <button @click="pickMonth(d_index)">押す</button> -->
-          <a href="javascript:void(0)" @click="closeUpSet(date, d_index)">
-            <h5>{{d_index}}</h5>
-            <dl v-for="(event,e_index) in date.events" :key="e_index">
-              <dt>{{event.name}}<br>
-                {{event.start_time}}<br>
-              </dt>
-              <dd>{{event.url}}</dd>
-            </dl>
-          </a>
-        </li>
-      </ul>
+  <div class="wrap bg_black">
+    <div class="inner">
+      <div class="slider_wrapper">
 
-      <div class="closeup_area">
-        <h2>【日程詳細】</h2>
-        <p>{{closeupDay}}</p>
-        <dl v-for="(event,e_index) in closeup.events" :key="e_index">
-          <dt>{{event.name}}<br>
-            {{event.start_time}}<br>
-          </dt>
-          <dd>{{event.url}}</dd>
-        </dl>
-      </div>
+        <div id="slick_app">
+          <div class="slider_area">
 
-    </div>
-    <hr>
-  </div>
+            <div class="prevnext_box">
+              <a class="go_bt prev" href="javascript:void(0)" @click="goPrevMouse()">前の月へ</a>
+              <a class="go_bt next" href="javascript:void(0)" @click="goNextMouse()">次の月へ</a>
+            </div>
+            <ul class="slider multiple-item">
+              <li v-for="(date,d_index) in dates" :key="d_index">
+                <!-- <button @click="pickMonth(d_index)">押す</button> -->
+                <a class="egg_son" :class="{active:eggActive(d_index)}" href="javascript:void(0)" @click="closeUpSet(date, d_index)">
+                  <h3>{{ d_index | monthDay }}</h3>
+                  <p>{{ d_index | showDay }}</p>
+                </a>
+              </li>
+            </ul>
+            <div class="closeup_wrapper">
+              <div class="closeup_area">
+                <h2 v-if="closeupDay"><strong>{{ closeupDay | yearMonthDay }}{{ closeupDay | showDay }}</strong>のチケット情報</h2>
+                <div class="closeup_box">
+                  <dl v-for="(event,e_index) in closeup.events" :key="e_index">
+                    <a :href="event.event_url" target="_blank">
+                      <dt>{{event.start_time}}</dt>
+                      <dd>{{event.status | statusCheck}}</dd>
+                    </a></dl>
+                </div><!-- .closeup_box -->
+              </div><!-- .closeup_area -->
+            </div><!-- .closeup_wrapper -->
+          </div>
+        </div><!-- .slider_area -->
+      </div><!-- .slider_wrapper -->
+    </div><!-- .inner -->
+  </div><!-- .wrap -->
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script type="text/javascript" src="../../lib/slick/slick.min.js"></script>
