@@ -41,11 +41,18 @@
               <div class="closeup_area">
                 <h2 v-if="closeupDay"><strong>{{ closeupDay | yearMonthDay }}{{ closeupDay | showDay }}</strong>のチケット情報</h2>
                 <div class="closeup_box">
-                  <dl v-for="(event,e_index) in closeup.events" :key="e_index">
-                    <a :href="event.event_url" target="_blank">
-                      <dt>{{event.start_time}}</dt>
-                      <dd :class="'ts_status_'+ event.ticket_stock_status">{{event.ticket_stock_status | statusCheck}}</dd>
-                    </a></dl>
+                  <div class="buy_ud">
+                    <h3>スクラップチケット（スクチケ）で購入する</h3>
+                    <p class="kouen"><a href="#" target="_blank">&gt;&nbsp;公演日時一覧</a></p>
+                    <div class="zikanwari">
+                      <dl v-for="(event,e_index) in closeup.events" :key="e_index" :class="ts_status(event.ticket_stock_status)">
+                        <a :href="event.event_url" target="_blank">
+                          <dt>{{event.start_time}}</dt>
+                          <dd>{{event.ticket_stock_status |
+                            statusCheck}}</dd>
+                        </a></dl>
+                    </div>
+                  </div>
                 </div><!-- .closeup_box -->
               </div><!-- .closeup_area -->
             </div><!-- .closeup_wrapper -->

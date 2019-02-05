@@ -169,6 +169,11 @@ var vm = new Vue({
       //console.log(hairetuIndex);
 
       $('.multiple-item').slick('slickGoTo', hairetuIndex);
+    },
+
+    //販売状況class付与
+    ts_status: function (ticket_stock_status) {
+      return 'ts_status_' + ticket_stock_status
     }
   },
 
@@ -243,19 +248,19 @@ var vm = new Vue({
       var message
       switch (ticket_stock_status) {
         case 0:
-          message = '○ 購入可能';
+          message = '○購入可能';
           break;
 
         case 1:
-          message = '△ 残りわずか';
+          message = '△残りわずか';
           break;
 
         case 2:
-          message = '× 売り切れ';
+          message = '×売り切れ';
           break;
 
         default:
-          message = '△ 残りわずか';
+          message = '△残りわずか';
           break;
       }
       return message;
