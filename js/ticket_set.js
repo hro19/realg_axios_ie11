@@ -31,14 +31,29 @@ var slugs = { // slugによりapi情報を取得
   },
 }
 
+//日にち取得
+// @param  {Date}   date
+// @param  {String} [format]
+// @return {String}
+formatDate = function (date, format) {
+  if (!format) format = 'YYYY/MM/DD';
+  format = format.replace(/YYYY/g, date.getFullYear());
+  format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+  format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
+  return format;
+}
+
+
 var vm = new Vue({
   el: '#slick_app',
   data: function () {
     return {
+      //apiエントリポイントbasicURL
+      entryUrl: 'https://www.0553.jp/scrap/api/event_with_period',
+      //地方情報（apiエントリポイントURLを構築するのに使う）
+      slugs: slugs,
       //デバイスサイズ横幅
       width: window.innerWidth,
-      //本日の日付
-      today: "",
       //全てのjsonデータを格納
       alls: [],
       //slickを１回だけ発動させるためのフラグ
@@ -51,33 +66,43 @@ var vm = new Vue({
       slickActiveIndex: 0,
       //slicksliderの現在のアクティブな月
       slickActiveMonth: 0,
-      //urlの第二スラッグを取得
-      keySlug: "",
-      //apiエントリポイントURLを構築するのに使う（example.com/ticket/〇〇←このスラッグ）
-      apiEntryPoint: "",
-      //地方情報（apiエンドポイントURLを構築するのに使う）
-      slugs: slugs
     }
   },
   created: function () {
-    this.today = this.formatDate(new Date())
-
     //リサイズに応じてデバイスサイズを測定
     window.addEventListener('resize', this.wid, false)
 
-    //url情報、チケットapiエンドポイントとなるkeyを取得
-    this.keySlug = window.location.pathname.split("/")[2];
+    //チケットapi情報取得
+    this.getPosts();
   },
+
   methods: {
     //json情報の取得（非同期処理）
     getPosts: function () {
       var _this = this;
-      axios.get(_this.apiEntryPoint)
+      //url情報、チケットapiエンドポイントとなるkeyを取得
+      var keySlug = window.location.pathname.split("/")[2];
+
+      (function () {
+        var todayDate = new Date(formatDate(new Date()));
+        var eventStartDate = new Date(this.slugs[keySlug].event_start_date);
+        //console.log(todayDate)
+        //console.log(eventStartDate)
+        if (eventStartDate < todayDate) {
+          this.slugs[keySlug].event_start_date = formatDate(new Date());
+        }
+
+      })(keySlug);
+
+      axios.get(this.entryUrl, {
+        params: this.slugs[keySlug]
+      })
         .then(function (response) {
           _this.alls = response.data.contents[0];
         })
         .catch(function (error) {
-          window.alert(error);
+          //window.alert(error);
+          console.log(error);
         });
     },
 
@@ -90,26 +115,12 @@ var vm = new Vue({
     closeUpSet: function (date, d_index) {
       this.closeup = date
       this.closeupDay = d_index
-      //this.closeupMonth = this.formatDate(new Date(d_index), 'MM');
     },
 
     //クローズアップされている日付をセット
     closeUpSetFirst: function () {
       this.closeup = Object.values(this.dates)[0]
       this.closeupDay = Object.keys(this.dates)[0]
-      //this.closeupMonth = this.formatDate(new Date(Object.keys(this.dates)[0]), 'MM');
-    },
-
-    //日にち取得
-    // @param  {Date}   date
-    // @param  {String} [format]
-    // @return {String}
-    formatDate: function (date, format) {
-      if (!format) format = 'YYYY/MM/DD';
-      format = format.replace(/YYYY/g, date.getFullYear());
-      format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
-      format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
-      return format;
     },
 
     //デバイスサイズ計算
@@ -118,6 +129,7 @@ var vm = new Vue({
       this.width = window.innerWidth;
     },
 
+    //「次の月へ」ボタン
     goNextMouse: function () {
       var targetNextM = Number(this.slickActiveMonth) + 1
       targetNextM = (targetNextM > 12) ? 1 : targetNextM;
@@ -140,10 +152,12 @@ var vm = new Vue({
           hairetuIndex = this.monthlists.length - 4
         }
       }
-      console.log(hairetuIndex);
+      //console.log(hairetuIndex);
 
       $('.multiple-item').slick('slickGoTo', hairetuIndex);
     },
+
+    //「前の月へ」ボタン
     goPrevMouse: function () {
       var targetPrevM = Number(this.slickActiveMonth) - 1
       targetPrevM = (targetPrevM > 12) ? 1 : targetPrevM;
@@ -172,30 +186,21 @@ var vm = new Vue({
       var indexArray = []
 
       for (var key in this.dates) {
-        var targetM = _this07.formatDate(new Date(key), 'MM');
+        var targetM = formatDate(new Date(key), 'MM');
         indexArray.push(Number(targetM))
       }
       return indexArray
     },
   },
   watch: {
-    //ticketAPIのエンドポイント構築
-    keySlug: function () {
-      var todayDate = new Date(this.today);
-      var eventStartDate = new Date(this.slugs[this.keySlug].event_start_date);
-      //console.log(todayDate)
-      //console.log(eventStartDate)
-      var da = (eventStartDate > todayDate) ? this.slugs[this.keySlug].event_start_date : this.today;
-      //console.log(da)
-      var basicUrl = 'https://www.0553.jp/scrap/api/event_with_period'
-      this.apiEntryPoint = basicUrl + '?shop_id=' + this.slugs[this.keySlug].shop_id + '&content_code=' + this.slugs[this.keySlug].content_code + '&event_start_date=' + da + '&event_end_date=' + this.slugs[this.keySlug].event_end_date
-    },
     apiEntryPoint: function () {
       this.getPosts();
     },
+    //スライダーを押したときに反応
     slickActiveIndex: function () {
       this.slickActiveMonth = this.monthlists[this.slickActiveIndex]
     },
+    //slickActiveMonthの初期値
     monthlists: function () {
       this.slickActiveMonth = this.monthlists[this.slickActiveIndex]
     }
@@ -204,7 +209,10 @@ var vm = new Vue({
   filters: {
     //曜日
     showDay: function (t) {
-      var [y, m, d] = t.split('/');
+      var ymd = t.split('/');
+      var y = ymd[0];
+      var m = ymd[1];
+      var d = ymd[2];
       var p = y < 45 ? '20' : '19';
       var _y = +p + y;
       var _m = +m - 1;
@@ -214,19 +222,42 @@ var vm = new Vue({
 
     //月/日
     MonthDay: function (t) {
-      var [y, m, d] = t.split('/');
+      var ymd = t.split('/');
+      var y = ymd[0];
+      var m = ymd[1];
+      var d = ymd[2];
       return m + '/' + d;
     },
 
     //年月日
     yearMonthDay: function (t) {
-      var [y, m, d] = t.split('/');
+      var ymd = t.split('/');
+      var y = ymd[0];
+      var m = ymd[1];
+      var d = ymd[2];
       return y + '年' + m + '月' + d + '日';
     },
 
     //販売状況
-    statusCheck: function (num) {
-      var message = (num === 2) ? "× 売り切れ" : "○ 購入可能";
+    statusCheck: function (ticket_stock_status) {
+      var message
+      switch (ticket_stock_status) {
+        case 0:
+          message = '○ 購入可能';
+          break;
+
+        case 1:
+          message = '△ 残りわずか';
+          break;
+
+        case 2:
+          message = '× 売り切れ';
+          break;
+
+        default:
+          message = '△ 残りわずか';
+          break;
+      }
       return message;
     },
 
@@ -278,3 +309,4 @@ $('.multiple-item').on('afterChange', function (event, slick, currentSlide) {
   //console.log(slick);
   vm.slickActiveIndex = currentSlide
 });
+

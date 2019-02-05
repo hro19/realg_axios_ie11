@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <title>WP REST axiosテストページ</title>
-  <script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
-  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="../../js/vue.js"></script>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=es6"></script>
   <script src="../../js/myie11_polyfill.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="../../js/axios.min.js"></script>
   <link rel="stylesheet" href="../../css/common.css">
   <link rel="stylesheet" href="../../css/ticket.css">
   <link rel="stylesheet" type="text/css" href="../../lib/slick/slick.css" />
@@ -44,7 +44,7 @@
                   <dl v-for="(event,e_index) in closeup.events" :key="e_index">
                     <a :href="event.event_url" target="_blank">
                       <dt>{{event.start_time}}</dt>
-                      <dd>{{event.status | statusCheck}}</dd>
+                      <dd :class="'ts_status_'+ event.ticket_stock_status">{{event.ticket_stock_status | statusCheck}}</dd>
                     </a></dl>
                 </div><!-- .closeup_box -->
               </div><!-- .closeup_area -->
@@ -55,7 +55,7 @@
     </div><!-- .inner -->
   </div><!-- .wrap -->
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="../../js/jquery-2.2.4.min.js"></script>
   <script type="text/javascript" src="../../lib/slick/slick.min.js"></script>
   <script src="../../js/ticket_set.js"></script>
 </body>
