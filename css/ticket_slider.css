@@ -125,7 +125,7 @@ a.egg_son.active {
 
 @media screen and (max-width: 768px) {
     .slider {
-        margin: 0 0 50px;
+        margin: 0 0 25px;
         padding: 0 40px;
     }
     .egg_son h3 {
@@ -256,11 +256,21 @@ dl.ts_status_2 a {
 }
 
 @media screen and (max-width: 768px) {
+	.closeup_area {
+	    padding: 0px 0% 5px;
+	    background: none;
+	}
+
     .closeup_area>h2 strong {
         font-size: 2.2rem;
         font-weight: 700;
         display: block;
     }
+
+    .closeup_area .closeup_box {
+    padding: 25px 4%;
+	}
+
     .buy_ud p.kouen a {
         position: static;
         top: auto;
@@ -270,22 +280,17 @@ dl.ts_status_2 a {
         letter-spacing: 0px;
         text-align: right;
     }
+    .buy_ud .zikanwari {
+    padding: 20px 0 15px;
+}
     .buy_ud .zikanwari dl {
         width: 48%;
         margin-left: 2%;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
+    .buy_ud .zikanwari dl a {
+    flex-direction: column;
 }
-
-@media screen and (max-width: 420px) {
-    .buy_ud .zikanwari {
-        width: 100%;
-        margin-left: 0%;
-    }
-    .buy_ud .zikanwari dl {
-        width: 100%;
-        margin-left: 0%;
-    }
 }
 
 /*------------------------------------------
