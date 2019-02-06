@@ -5,7 +5,6 @@
 /*------------------------------------------
 	sliderエリア
 ------------------------------------------*/
-
 .bg_black {
     background-color: #000;
 }
@@ -82,19 +81,9 @@
 /*------------------------------------------
 	slider_slickエリア
 ------------------------------------------*/
-
 .slider {
     margin: 0 0 35px;
     padding: 0 70px;
-}
-
-.slider img {
-    width: 100%;
-    height: auto;
-}
-
-.slick-dots {
-    bottom: -25px;
 }
 
 .slick-slide {
@@ -151,7 +140,6 @@ a.egg_son.active {
 /*------------------------------------------
 	closeupエリア
 ------------------------------------------*/
-
 .closeup_wrapper {
     padding: 0 0 40px;
 }
@@ -299,3 +287,46 @@ dl.ts_status_2 a {
         margin-left: 0%;
     }
 }
+
+/*------------------------------------------
+	スクラップチケット以外
+------------------------------------------*/
+.sukutic_etc{
+	text-align: center;
+	font-size: 1.65rem;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+.other_btn_box{
+	display: flex;
+	justify-content: center;
+}
+
+.other_btn_box a.going_eplus{
+	width: 92%;
+	max-width: 320px;
+	padding:10px 15px;
+	border-radius: 24px;
+	background-color: #85AFB2;
+	text-align: center;
+	font-size: 1.65rem;
+	font-weight: bold;
+	color: #fff;
+	transition: .4s;
+}
+
+.other_btn_box a.going_eplus:hover{
+	opacity: .7;
+}
+
+.other_btn_box a.going_eplus::after {
+    content: "\f08e";
+    padding-left: 8px;
+    font-family: 'Font Awesome 5 Light';
+    font-style: normal;
+    font-weight: bold;
+    vertical-align: 0px;
+}
+
+@media screen and (max-width: 768px) {}
